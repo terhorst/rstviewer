@@ -17,7 +17,7 @@ import urllib
 
 # This was added in 3.5.1.
 try:
-    from asyncio import run_coroutine_threadsafes
+    from asyncio import run_coroutine_threadsafe
 except ImportError:
     def run_coroutine_threadsafe(coro, loop):
         def f():
@@ -75,7 +75,6 @@ iframe {{
 </html>
 """
 
-# Coroutine which converts .rst to .html
 
 # Coroutine which opens browser to URL
 async def open_browser(url):
