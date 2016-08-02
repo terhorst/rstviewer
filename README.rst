@@ -15,7 +15,7 @@ opens a new browser window containing an HTML representation of of
 Security
 --------
 Practically nonexistent. The program creates an HTTP server which serves
-all files located in or beneath the directory containing ``files.rst``.
+all files located in or beneath the directory containing ``file.rst``.
 This is to facilitate the loading of images and other assets linked by
 the RST document. Although the server binds only to the local interface,
 this is still insecure. In short, do not use this program if you are
