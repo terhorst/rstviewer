@@ -19,16 +19,19 @@ import urllib
 try:
     from asyncio import run_coroutine_threadsafe
 except ImportError:
+
     def run_coroutine_threadsafe(coro, loop):
         def f():
             loop.create_task(coro)
+
         loop.call_soon_threadsafe(f)
 
 
 async def update_html(rstfile, dest, ev=None):
     """Convert rstfile to HTML file dest. Optionally fire ev upon completion."""
     logger.debug("Converting %s -> %s", rstfile, dest)
-    p = await asyncio.create_subprocess_shell("rst2html5 {} {}".format(rstfile, dest))
+    p = await asyncio.create_subprocess_shell("rst2html5 {} {}".format(rstfile,
+                                                                       dest))
     await p.wait()
     logger.debug("Done updating")
     if ev is not None:
