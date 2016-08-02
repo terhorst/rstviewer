@@ -14,7 +14,8 @@ opens a new browser window containing an HTML representation of of
 
 Requirements
 ------------
-Python 3.5 or greater and a browser which supports WebSockets.
+Python 3.5+ and a browser which supports WebSockets. (The package has
+been tested only on Chrome and Safari, thus far.)
 
 Author
 ------

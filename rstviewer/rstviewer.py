@@ -142,9 +142,6 @@ def main():
     fn = os.path.basename(abspath)
     dir = os.path.dirname(abspath)
 
-    # Create temporary directory housing HTML
-    tmp_dir = tempfile.mkdtemp()
-
     loop = asyncio.get_event_loop()
     # This event is used to communicate to the coroutine holding the web
     # socket this it should push an update.
@@ -152,9 +149,9 @@ def main():
 
     app = web.Application(loop=loop)
     # This _iframe holds the actual converted RST
-    iframe_path = os.path.join(tmp_dir, "_iframe.html")
+    iframe_path = os.path.join(dir, "_iframe.html")
     # Static routes to serve the initial .html files.
-    app.router.add_static("/static", tmp_dir)
+    app.router.add_static("/static", dir)
     # Set up the web socket handler.
     ws_h = functools.partial(ws_handler, ev)
     app.router.add_route("GET", "/ws", ws_h)
@@ -163,11 +160,17 @@ def main():
     # Port 0 => bind to a random port
     sock.bind(('127.0.0.1', 0))
     port = sock.getsockname()[1]
+    # Add a second random port to service HTTP requests. This way,
+    # we can serve images and stuff while holding open the websocket.
+    sock2 = socket()
+    # Port 0 => bind to a random port
+    sock2.bind(('127.0.0.1', 0))
+    port2 = sock2.getsockname()[1]
 
-    html_name = fn + ".html"
-    container_path = os.path.join(tmp_dir, html_name)
+    html_name = "_" + fn + ".html"
+    container_path = os.path.join(dir, html_name)
     iframe_url = "http://localhost:{port}/static/_iframe.html".format(
-        port=port)
+        port=port2)
     logger.debug("Creating container file at %s", container_path)
     open(container_path,
          "wt").write(HTML_TEMPLATE.format(
@@ -181,13 +184,18 @@ def main():
     asyncio.ensure_future(update_html(abspath, iframe_path))
     asyncio.ensure_future(watch(dir, watcher))
     container_url = "http://localhost:{port}/static/{html_name}".format(
-        port=port, html_name=html_name)
+        port=port2, html_name=html_name)
     asyncio.ensure_future(open_browser(container_url))
     asyncio.ensure_future(loop.create_server(handler, sock=sock))
+    asyncio.ensure_future(loop.create_server(handler, sock=sock2))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        shutil.rmtree(tmp_dir)
+        for fn in [container_path, iframe_path]:
+            try:
+                os.unlink(fn)
+            except OSError:
+                pass
 
 
 if __name__ == "__main__":

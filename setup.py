@@ -2,12 +2,12 @@ from setuptools import setup
 
 setup(
         name = "rstviewer",
-        version = "0.0.1",
+        version = "0.0.2",
         author = "Jonathan Terhorst",
         author_email = "terhorst@gmail.com",
         description = "An in-browser RST viewer with live updating",
-        license = "BSD",
-        keywords = "ReStructuredText rst editor viewer",
+        license = "GPL",
+        keywords = "reStructuredText rst editor viewer",
         packages = ['rstviewer'],
         install_requires=[
             'rst2html5',
