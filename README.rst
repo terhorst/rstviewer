@@ -12,6 +12,14 @@ Executing
 opens a new browser window containing an HTML representation of of
 ``file.rst``. The browser window refreshes when ``file.rst`` is changed.
 
+Options
+-------
+
+By default, ``rstviewer`` runs in quiet mode -- no logging messages are
+emitted, so as not to interfere with editing in the console. The option
+``-v``, which can be specified multiple times, increases the verbosity
+level.
+
 Security
 --------
 Practically nonexistent. The program creates an HTTP server which serves

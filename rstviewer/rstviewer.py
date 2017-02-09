@@ -19,26 +19,24 @@ import urllib
 try:
     from asyncio import run_coroutine_threadsafe
 except ImportError:
-
     def run_coroutine_threadsafe(coro, loop):
         def f():
             loop.create_task(coro)
-
         loop.call_soon_threadsafe(f)
 
 
 async def update_html(rstfile, dest, ev=None):
     """Convert rstfile to HTML file dest. Optionally fire ev upon completion."""
     logger.debug("Converting %s -> %s", rstfile, dest)
-    p = await asyncio.create_subprocess_shell("rst2html5 {} {}".format(rstfile,
-                                                                       dest))
+    p = await asyncio.create_subprocess_shell(
+            "rst2html5 {} {}".format(rstfile, dest))
     await p.wait()
     logger.debug("Done updating")
     if ev is not None:
         logger.debug("Firing update event")
         ev.set()
 
-
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 HTML_TEMPLATE = """
@@ -134,10 +132,15 @@ async def ws_handler(ev, request):
 
 def main():
     parser = argparse.ArgumentParser("rstviewer")
-    parser.add_argument("-d", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument('-v', '--verbose', action='count', default=0, help='verbosity level')
     parser.add_argument("file", metavar="file.rst", help="File to preview")
     args = parser.parse_args()
-    logging.basicConfig(level=logging.DEBUG if args.d else logging.INFO)
+    lvl = logging.ERROR
+    if args.verbose == 1:
+        lvl = logging.INFO
+    elif args.verbose >= 2:
+        lvl = logging.DEBUG
+    logging.getLogger().setLevel(lvl)
 
     # Extract directory from filename. watchdog monitors a whole
     # directory.
@@ -175,8 +178,7 @@ def main():
     iframe_url = "http://localhost:{port}/static/_iframe.html".format(
         port=port2)
     logger.debug("Creating container file at %s", container_path)
-    open(container_path,
-         "wt").write(HTML_TEMPLATE.format(
+    open(container_path, "wt").write(HTML_TEMPLATE.format(
              iframe_src=iframe_url, port=port))
 
     # This starts the watchdog in another thread. It makes (thread-safe)
@@ -184,13 +186,16 @@ def main():
     watcher = FileWatcher(loop, ev, abspath, iframe_path)
 
     # Create tasks and run
-    asyncio.ensure_future(update_html(abspath, iframe_path))
-    asyncio.ensure_future(watch(dir, watcher))
-    container_url = "http://localhost:{port}/static/{html_name}".format(
-        port=port2, html_name=html_name)
+    container_url = "http://localhost:{port}/static/{html_name}".format(port=port2, html_name=html_name)
+    tasks = asyncio.gather(*[
+        asyncio.ensure_future(x) for x in [
+            update_html(abspath, iframe_path),
+            watch(dir, watcher),
+            loop.create_server(handler, sock=sock),
+            loop.create_server(handler, sock=sock2)]
+            ])
+    loop.run_until_complete(tasks)
     asyncio.ensure_future(open_browser(container_url))
-    asyncio.ensure_future(loop.create_server(handler, sock=sock))
-    asyncio.ensure_future(loop.create_server(handler, sock=sock2))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
