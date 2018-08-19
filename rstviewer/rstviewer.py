@@ -7,6 +7,7 @@ import os
 import os.path
 import shutil
 import signal
+import sys
 import tempfile
 import urllib
 import webbrowser
