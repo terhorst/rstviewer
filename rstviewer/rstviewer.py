@@ -1,40 +1,45 @@
 #!/usr/bin/env python3
+import argparse
 import asyncio
-import shutil
-import signal
-import watchdog.events
-from hachiko.hachiko import AIOWatchdog, AIOEventHandler
-from aiohttp import web
+import functools
+import logging
 import os
 import os.path
-import argparse
-import functools
-import webbrowser
+import shutil
+import signal
 import tempfile
-import logging
-from socket import socket
 import urllib
+import webbrowser
+from socket import socket
+
+import watchdog.events
+from aiohttp import web
+from hachiko.hachiko import AIOEventHandler, AIOWatchdog
+
 
 # This was added in 3.5.1.
 try:
     from asyncio import run_coroutine_threadsafe
 except ImportError:
+
     def run_coroutine_threadsafe(coro, loop):
+
         def f():
             loop.create_task(coro)
+
         loop.call_soon_threadsafe(f)
 
 
 async def update_html(rstfile, dest, ev=None):
     """Convert rstfile to HTML file dest. Optionally fire ev upon completion."""
     logger.debug("Converting %s -> %s", rstfile, dest)
-    p = await asyncio.create_subprocess_shell(
-            "rst2html5 {} {}".format(rstfile, dest))
+    p = await asyncio.create_subprocess_shell("rst2html5 {} {}".format(rstfile, dest))
     await p.wait()
     logger.debug("Done updating")
     if ev is not None:
         logger.debug("Firing update event")
         ev.set()
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -86,14 +91,15 @@ async def open_browser(url):
 
 # Watch for changes to file
 class FileWatcher(watchdog.events.PatternMatchingEventHandler):
+
     def __init__(self, loop, ev, filename, dest):
         """Monitor filename for changes. Upon a change, convert filename
         to HTML and save to dest by injecting a routine into event loop,
         and fire event ev.
         """
         super().__init__(
-            patterns=['*/' + os.path.basename(filename)],
-            ignore_directories=True)
+            patterns=["*/" + os.path.basename(filename)], ignore_directories=True
+        )
         self._loop = loop
         self._ev = ev
         self._fn = filename
@@ -132,7 +138,9 @@ async def ws_handler(ev, request):
 
 def main():
     parser = argparse.ArgumentParser("rstviewer")
-    parser.add_argument('-v', '--verbose', action='count', default=0, help='verbosity level')
+    parser.add_argument(
+        "-v", "--verbose", action="count", default=0, help="verbosity level"
+    )
     parser.add_argument("file", metavar="file.rst", help="File to preview")
     args = parser.parse_args()
     lvl = logging.ERROR
@@ -169,36 +177,42 @@ def main():
     handler = app.make_handler()
     sock = socket()
     # Port 0 => bind to a random port
-    sock.bind(('127.0.0.1', 0))
+    sock.bind(("127.0.0.1", 0))
     port = sock.getsockname()[1]
     # Add a second random port to service HTTP requests. This way,
     # we can serve images and stuff while holding open the websocket.
     sock2 = socket()
     # Port 0 => bind to a random port
-    sock2.bind(('127.0.0.1', 0))
+    sock2.bind(("127.0.0.1", 0))
     port2 = sock2.getsockname()[1]
 
     html_name = "_" + fn + ".html"
     container_path = os.path.join(dir, html_name)
-    iframe_url = "http://localhost:{port}/static/_iframe.html".format(
-        port=port2)
+    iframe_url = "http://localhost:{port}/static/_iframe.html".format(port=port2)
     logger.debug("Creating container file at %s", container_path)
-    open(container_path, "wt").write(HTML_TEMPLATE.format(
-             iframe_src=iframe_url, port=port))
+    open(container_path, "wt").write(
+        HTML_TEMPLATE.format(iframe_src=iframe_url, port=port)
+    )
 
     # This starts the watchdog in another thread. It makes (thread-safe)
     # calls into the event loop to signal that a file has changed.
     watcher = FileWatcher(loop, ev, abspath, iframe_path)
 
     # Create tasks and run
-    container_url = "http://localhost:{port}/static/{html_name}".format(port=port2, html_name=html_name)
-    tasks = asyncio.gather(*[
-        asyncio.ensure_future(x) for x in [
-            update_html(abspath, iframe_path),
-            watch(dir, watcher),
-            loop.create_server(handler, sock=sock),
-            loop.create_server(handler, sock=sock2)]
-            ])
+    container_url = "http://localhost:{port}/static/{html_name}".format(
+        port=port2, html_name=html_name
+    )
+    tasks = asyncio.gather(
+        *[
+            asyncio.ensure_future(x)
+            for x in [
+                update_html(abspath, iframe_path),
+                watch(dir, watcher),
+                loop.create_server(handler, sock=sock),
+                loop.create_server(handler, sock=sock2),
+            ]
+        ]
+    )
     loop.run_until_complete(tasks)
     asyncio.ensure_future(open_browser(container_url))
     try:
