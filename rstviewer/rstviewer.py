@@ -148,6 +148,11 @@ def main():
     fn = os.path.basename(abspath)
     dir = os.path.dirname(abspath)
 
+    if sys.platform == 'win32':
+        # default windows event loop does not support subprocesses, which we need. cf. #1
+        loop = asyncio.ProactorEventLoop()
+        asyncio.set_event_loop(loop)
+
     loop = asyncio.get_event_loop()
     # This event is used to communicate to the coroutine holding the web
     # socket this it should push an update.
