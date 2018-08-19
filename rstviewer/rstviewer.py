@@ -125,7 +125,7 @@ async def ws_handler(ev, request):
     while True:
         await ev.wait()
         logger.debug("Sending update to ws")
-        ws.send_str("update")
+        await ws.send_str("update")
         ev.clear()
     return ws
 
