@@ -12,7 +12,7 @@ setup(
     use_scm_version=True,
     setup_requires=["setuptools_scm"],
     python_requires=">=3.6",
-    install_requires=["rst2html5", "hachiko", "watchdog", "aiohttp>=4.0.0"],
+    install_requires=["rst2html5", "hachiko", "watchdog", "aiohttp>=3.7.2"],
     entry_points={
         "console_scripts": ["rstviewer = rstviewer.rstviewer:main"],
     },
