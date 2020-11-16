@@ -34,7 +34,7 @@ except ImportError:
 async def update_html(rstfile, dest, ev=None):
     """Convert rstfile to HTML file dest. Optionally fire ev upon completion."""
     logger.debug("Converting %s -> %s", rstfile, dest)
-    p = await asyncio.create_subprocess_shell("rst2html5 {} {}".format(rstfile, dest))
+    p = await asyncio.create_subprocess_exec("rst2html5", rstfile, dest)
     await p.wait()
     logger.debug("Done updating")
     if ev is not None:
