@@ -31,7 +31,7 @@ concerned about security.
 
 Requirements
 ------------
-Python 3.5+ and a browser which supports WebSockets. (The package has
+Python 3.6+ and a browser which supports WebSockets. (The package has
 been tested only on Chrome and Safari, thus far.)
 
 Author
