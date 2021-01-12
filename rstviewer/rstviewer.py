@@ -5,8 +5,8 @@ import functools
 import logging
 import os
 import os.path
-import webbrowser
 import shlex
+import webbrowser
 from asyncio import run_coroutine_threadsafe
 from socket import socket
 
@@ -140,7 +140,11 @@ async def ws_handler(ev, request):
 def main(test_mode=False):
     parser = argparse.ArgumentParser("rstviewer")
     parser.add_argument(
-        "-v", "--verbose", action="count", default=0, help="verboseness, pass repeatedly to increase verbosity"
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="verboseness, pass repeatedly to increase verbosity",
     )
     parser.add_argument("file", metavar="file.rst", help="File to preview")
     args = parser.parse_args()
