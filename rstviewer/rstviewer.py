@@ -6,6 +6,7 @@ import logging
 import os
 import os.path
 import webbrowser
+import shlex
 from asyncio import run_coroutine_threadsafe
 from socket import socket
 
@@ -17,7 +18,9 @@ from hachiko.hachiko import AIOWatchdog
 async def update_html(rstfile, dest, ev=None):
     """Convert rstfile to HTML file dest. Optionally fire ev upon completion."""
     logger.debug("Converting %s -> %s", rstfile, dest)
-    p = await asyncio.create_subprocess_shell("rst2html5 {} {}".format(rstfile, dest))
+    p = await asyncio.create_subprocess_shell(
+        " ".join(shlex.quote(arg) for arg in ["rst2html5", rstfile, dest])
+    )  # this is shlex.join from 3.8 onwards
     await p.wait()
     logger.debug("Done updating")
     if ev is not None:
