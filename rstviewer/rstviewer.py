@@ -140,7 +140,7 @@ async def ws_handler(ev, request):
 def main(test_mode=False):
     parser = argparse.ArgumentParser("rstviewer")
     parser.add_argument(
-        "-v", "--verbose", action="count", default=0, help="verbosity level"
+        "-v", "--verbose", action="count", default=0, help="verboseness, pass repeatedly to increase verbosity"
     )
     parser.add_argument("file", metavar="file.rst", help="File to preview")
     args = parser.parse_args()
