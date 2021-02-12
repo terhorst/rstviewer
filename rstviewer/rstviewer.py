@@ -14,15 +14,33 @@ import watchdog.events
 from aiohttp import web
 from hachiko.hachiko import AIOWatchdog
 
+ERROR_TEMPLATE = """
+<html>
+<head><title>Error</title></head>
+<body>
+<h4>Error during conversion</h4>
+<code>{traceback}</code>
+</body>
+</html>
+"""
+
 
 async def update_html(rstfile, dest, ev=None):
     """Convert rstfile to HTML file dest. Optionally fire ev upon completion."""
     logger.debug("Converting %s -> %s", rstfile, dest)
     p = await asyncio.create_subprocess_shell(
-        " ".join(shlex.quote(arg) for arg in ["rst2html5", rstfile, dest])
+        " ".join(
+            shlex.quote(arg) for arg in ["rst2html5", "--traceback", rstfile, dest]
+        ),
+        stderr=asyncio.subprocess.PIPE,
     )  # this is shlex.join from 3.8 onwards
-    await p.wait()
-    logger.debug("Done updating")
+    stdout, stderr = await p.communicate()
+    logger.debug("Done updating. rst2html5 status code=%d", p.returncode)
+    if p.returncode != 0:
+        with open(dest, "wt") as f:
+            f.write(
+                ERROR_TEMPLATE.format(traceback=stderr.decode().replace("\n", "<br/>"))
+            )
     if ev is not None:
         logger.debug("Firing update event")
         ev.set()
