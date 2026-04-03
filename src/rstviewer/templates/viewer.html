@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RST Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: block;
+        }
+
+        iframe {
+            display: block;
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe id="rst" src="/static/_iframe.html"></iframe>
+
+    <script>
+        var ws = new WebSocket("ws://localhost:{{ port }}/ws");
+
+        ws.onmessage = function (event) {
+            if (event.data === "close") {
+                window.close();
+            } else {
+                document.getElementById("rst").contentWindow.location.reload();
+            }
+        };
+
+        ws.onclose = function () {
+            // Connexion perdue sans message "close" (crash serveur, etc.)
+            window.close();
+        };
+
+        ws.onerror = function (event) {
+            console.log("WebSocket error", event);
+        };
+    </script>
+</body>
+
+</html>

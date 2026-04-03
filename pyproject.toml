@@ -1,3 +1,23 @@
 [build-system]
-requires = ["setuptools >= 40.6.0", "wheel"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.0"]
+
+[project]
+name = "rstviewer"
+version = "0.0.9"
+description = "An in-browser RST viewer with live updating"
+readme = "README.rst"
+license = "GPL-3.0-or-later"
+authors = [{ name = "Jonathan Terhorst", email = "terhorst@gmail.com" }]
+keywords = ["reStructuredText", "rst", "editor", "viewer"]
+requires-python = ">=3.10"
+dependencies = ["rst2html5", "fastapi", "watchdog", "uvicorn[standard]"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+rstviewer = ["templates/*.html", "static/*.css"]
+
+[project.scripts]
+rstviewer = "rstviewer.rstviewer:main"

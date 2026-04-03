@@ -1,0 +1,344 @@
+/* rstviewer.css — thème ReadTheDocs pour rst2html5 */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Roboto+Slab:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+:root {
+    --color-brand: #2980b9;
+    --color-brand-dark: #1a5276;
+    --color-text: #404040;
+    --color-text-light: #777;
+    --color-border: #e1e4e5;
+    --color-bg: #fcfcfc;
+    --color-code-bg: #f8f8f8;
+    --font-body: 'Lato', sans-serif;
+    --font-heading: 'Roboto Slab', serif;
+    --font-mono: 'Roboto Mono', monospace;
+    --content-max-width: 860px;
+    --content-padding: 2.5rem 3rem;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+/* ── Body = la colonne de contenu centrée ──
+   rst2html5 sans titre de document génère directement des <section> dans <body>,
+   sans wrapper. On centre donc le body lui-même.
+── */
+body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--content-padding);
+}
+
+/* ── Sections : pas de mise en page propre, juste du flux normal ── */
+section {
+    display: block;
+}
+
+/* ── Titres ── */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.25;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+h1 {
+    font-size: 1.85rem;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.4rem;
+    margin-top: 2.5rem;
+}
+
+/* Premier h1 de la page : pas de marge en haut */
+body>section:first-child>h1,
+body>section:first-of-type>h1 {
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 1.4rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.3rem;
+}
+
+h3 {
+    font-size: 1.15rem;
+}
+
+h4 {
+    font-size: 1rem;
+}
+
+h5,
+h6 {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+/* ── Paragraphes & liens ── */
+p {
+    margin: 0 0 1.1rem;
+}
+
+a {
+    color: var(--color-brand);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--color-brand-dark);
+    text-decoration: underline;
+}
+
+strong {
+    font-weight: 700;
+}
+
+em {
+    font-style: italic;
+}
+
+/* ── Code inline ── */
+code,
+tt {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-code-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    color: #c0392b;
+}
+
+/* ── Blocs de code ── */
+pre {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    background: var(--color-code-bg);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-brand);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    line-height: 1.55;
+    margin: 0 0 1.5rem;
+}
+
+pre code,
+pre tt {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+}
+
+/* ── Listes ── */
+ul,
+ol {
+    margin: 0.25rem 0 1.1rem 1.5rem;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 0.3rem;
+}
+
+li>ul,
+li>ol {
+    margin-bottom: 0.15rem;
+}
+
+dl {
+    margin: 0 0 1.1rem;
+}
+
+dt {
+    font-weight: 700;
+    margin-top: 0.6rem;
+}
+
+dd {
+    margin-left: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+/* ── Tables ── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+th {
+    background: #f0f3f4;
+    font-weight: 700;
+    text-align: left;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--color-border);
+}
+
+td {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--color-border);
+    vertical-align: top;
+}
+
+tr:nth-child(even) td {
+    background: #f9fafb;
+}
+
+/* ── Blockquote ── */
+blockquote {
+    border-left: 4px solid var(--color-border);
+    margin: 0 0 1.1rem 1rem;
+    padding: 0.4rem 1rem;
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+/* ── Ligne horizontale ── */
+hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 2rem 0;
+}
+
+/* ── Images ── */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+}
+
+/* ── Admonitions ──
+   rst2html5 génère <aside class="note">, <aside class="warning">, etc.
+── */
+aside {
+    border-radius: 4px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid #6ab0de;
+    background: #e7f2fa;
+}
+
+aside>p:last-child {
+    margin-bottom: 0;
+}
+
+/* Titre de l'admonition */
+aside>p.admonition-title {
+    font-weight: 700;
+    font-family: var(--font-heading);
+    margin-bottom: 0.35rem;
+}
+
+aside.warning,
+aside.caution,
+aside.attention {
+    border-left-color: #f0b37e;
+    background: #ffedcc;
+}
+
+aside.danger,
+aside.error {
+    border-left-color: #e9a4a4;
+    background: #fce4e4;
+}
+
+aside.tip,
+aside.hint,
+aside.important {
+    border-left-color: #1abc9c;
+    background: #dbfaf4;
+}
+
+/* ── Topics ── */
+aside.topic {
+    background: #f0f3f4;
+    border-left-color: var(--color-border);
+    border: 1px solid var(--color-border);
+}
+
+/* ── Table des matières ── */
+nav.contents,
+div.contents {
+    display: inline-block;
+    background: #f8f9fa;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    min-width: 200px;
+}
+
+nav.contents p.topic-title,
+div.contents p.topic-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+nav.contents ul,
+div.contents ul {
+    margin: 0 0 0 1rem;
+}
+
+nav.contents a {
+    color: var(--color-brand);
+}
+
+/* ── Footnotes ── */
+aside.footnote,
+dl.footnote,
+dl.citation {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    border-top: 1px solid var(--color-border);
+    border-left: none;
+    background: none;
+    padding: 0.75rem 0 0;
+    border-radius: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    body {
+        padding: 1.25rem 1rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    h2 {
+        font-size: 1.15rem;
+    }
+
+    pre {
+        font-size: 0.8rem;
+    }
+}

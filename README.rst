@@ -31,12 +31,13 @@ concerned about security.
 
 Requirements
 ------------
-Python 3.6+ and a browser which supports WebSockets. (The package has
-been tested only on Chrome and Safari, thus far.)
+Python 3.10+ and a browser which supports WebSockets. (The package has
+been tested only on Chrome and Safari, thus far.) 
 
 Author
 ------
-Jonathan Terhorst <terhorst@gmail.com>
+- Jonathan Terhorst <terhorst@gmail.com>
+- Jean-François Lecomte <zwergon@free.fr>
 
 Inspiration
 -----------
